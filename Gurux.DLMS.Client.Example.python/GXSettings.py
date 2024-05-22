@@ -48,10 +48,10 @@ class GXSettings:
     # Constructor.
     #
     def __init__(self):
-        self.media = None
+        self.media = GXNet()
         self.trace = TraceLevel.INFO
         self.invocationCounter = None
-        self.client = GXDLMSSecureClient(True)
+        self.client = GXDLMSClient(True)
         #  Objects to read.
         self.readObjects = []
         self.outputFile = None

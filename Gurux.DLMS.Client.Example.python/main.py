@@ -50,7 +50,8 @@ from gurux_dlms import GXDLMSException, GXDLMSExceptionResponse, GXDLMSConfirmed
 from gurux_dlms import GXByteBuffer, GXDLMSTranslatorMessage, GXReplyData
 from gurux_dlms.enums import RequestTypes, Security, InterfaceType
 from gurux_dlms.secure.GXDLMSSecureClient import GXDLMSSecureClient
-from gurux_dlms.objects import GXDLMSObject
+from gurux_dlms.objects import GXDLMSObject, GXDLMSClock
+
 
 
 try:
@@ -99,7 +100,7 @@ class sampleclient():
                 if settings.outputFile and os.path.exists(settings.outputFile):
                     try:
                         c = GXDLMSObjectCollection.load(settings.outputFile)
-                        settings.client.objects.extend(c)
+                        GXDLMSObjectCollection.extend(c)
                         if settings.client.objects:
                             read = True
                     except Exception:
@@ -107,20 +108,24 @@ class sampleclient():
                 if not read:
                     reader.getAssociationView()
                 for k, v in settings.readObjects:
-                    obj = settings.client.objects.findByLN(ObjectType.NONE, k)
+                    obj = GXDLMSObjectCollection.findByLN(ObjectType.NONE, k)
                     if obj is None:
                         raise Exception("Unknown logical name:" + k)
-                    val = reader.read(obj, v)
-                    print(val)
-                    reader.showValue(v, val)
+                    if k == "1.1.72.7.0.255":
+                        val = reader.read(obj, v)
+                        print(val)
+                    
                 if settings.outputFile:
-                    settings.client.objects.save(settings.outputFile)
+                    GXDLMSObjectCollection.save(settings.outputFile)
             else:
                 
                 print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
                 #reader.get_value_by_obis_code('1.1.72.7.0.255')
+                RTC = GXDLMSClock("0.0.1.0.0.255")
+                rtc_val = reader.read(RTC, 2)
+                rtc_str = str(rtc_val) 
                 #reader.read(GXDLMSObject('43744',None,0),3)
-                reader.get_value_by_obis_code('1.0.31.7.126.255')
+                #reader.get_value_by_obis_code('1.0.31.7.126.255')
                 #reader.readAll(settings.outputFile)
                 print('else')
         except (ValueError, GXDLMSException, GXDLMSExceptionResponse, GXDLMSConfirmedServiceError) as ex:
