@@ -34,6 +34,7 @@
 import os
 import sys
 import traceback
+import time
 from gurux_serial import GXSerial
 from gurux_net import GXNet
 from gurux_dlms.enums import ObjectType
@@ -75,68 +76,108 @@ class sampleclient():
         # args: the command line arguments
         reader = None
         settings = GXSettings()
-        try:
-            # //////////////////////////////////////
-            #  Handle command line parameters.
-            ret = settings.getParameters(args)
-            if ret != 0:
-                return
-            # //////////////////////////////////////
-            #  Initialize connection settings.
-            if not isinstance(settings.media, (GXSerial, GXNet)):
-                raise Exception("Unknown media type.")
-            # //////////////////////////////////////
-            reader = GXDLMSReader(settings.client, settings.media, settings.trace, settings.invocationCounter)
-            print('hizo el reader')
-            settings.media.open()
-            print('hizo el media.open')
-            if settings.readObjects:
-                print('if settings')
-                read = False
-                reader.initializeConnection()
-                print('conectando')
-                
-                if settings.outputFile and os.path.exists(settings.outputFile):
+        while True:
+            try:
+                # //////////////////////////////////////
+                #  Handle command line parameters.
+                ret = settings.getParameters(args)
+                if ret != 0:
+                    return
+                # //////////////////////////////////////
+                #  Initialize connection settings.
+                if not isinstance(settings.media, (GXSerial, GXNet)):
+                    raise Exception("Unknown media type.")
+                # //////////////////////////////////////
+                reader = GXDLMSReader(settings.client, settings.media, settings.trace, settings.invocationCounter)
+                print('hizo el reader')
+                settings.media.open()
+                print('hizo el media.open')
+                if settings.readObjects:
+                    print('if settings')
+                    read = False
+                    reader.initializeConnection()
+                    print('conectando')
+                    
+                    if settings.outputFile and os.path.exists(settings.outputFile):
+                        try:
+                            c = GXDLMSObjectCollection.load(settings.outputFile)
+                            settings.client.objects.extend(c)
+                            if settings.client.objects:
+                                read = True
+                        except Exception:
+                            read = False
+                    if not read:
+                        reader.getAssociationView()
+                    for k, v in settings.readObjects:
+                        obj = settings.client.objects.findByLN(ObjectType.NONE, k)
+                        if obj is None:
+                            raise Exception("Unknown logical name:" + k)
+                        val = reader.read(obj, v)
+                        print(val)
+                        reader.showValue(v, val)
+                    if settings.outputFile:
+                        settings.client.objects.save(settings.outputFile)
+                else:   
+                    reader.initialize_get_value_by_obis_code(settings.outputFile)
+                    reader.get_value_by_obis_code("1-1:32.7.0")
+                    reader.get_value_by_obis_code("1-1:52.7.0")
+                    reader.get_value_by_obis_code("1-1:72.7.0")
+                    reader.get_value_by_obis_code("1-4:31.7.0")
+                    reader.get_value_by_obis_code("1-4:51.7.0")
+                    reader.get_value_by_obis_code("1-4:71.7.0")
+                    reader.get_value_by_obis_code("1-4:91.7.0")
+                    reader.get_value_by_obis_code("1-1:14.7.0")
+                    reader.get_value_by_obis_code("1-1:81.7.0")
+                    reader.get_value_by_obis_code("1-1:81.7.1")
+                    reader.get_value_by_obis_code("1-1:81.7.2")
+                    reader.get_value_by_obis_code("1-1:81.7.4")
+                    reader.get_value_by_obis_code("1-1:81.7.5")
+                    reader.get_value_by_obis_code("1-1:81.7.6")
+                    reader.get_value_by_obis_code("1-1:13.7.0")
+                    reader.get_value_by_obis_code("1-1:33.7.0")
+                    reader.get_value_by_obis_code("1-1:53.7.0")
+                    reader.get_value_by_obis_code("1-1:73.7.0")
+                    reader.get_value_by_obis_code("1-0:15.7.127")
+                    reader.get_value_by_obis_code("1-0:32.7.126")
+                    reader.get_value_by_obis_code("1-0:52.7.126")
+                    reader.get_value_by_obis_code("1-0:72.7.126")
+                    reader.get_value_by_obis_code("1-0:12.7.127")
+                    reader.get_value_by_obis_code("1-0:31.7.126")
+                    reader.get_value_by_obis_code("1-0:51.7.126")
+                    reader.get_value_by_obis_code("1-0:71.7.126")
+                    reader.get_value_by_obis_code("1-0:11.7.127")
+                    reader.get_value_by_obis_code("1-1:1.8.0")
+                    reader.get_value_by_obis_code("1-1:2.8.0")
+                    reader.get_value_by_obis_code("1-1:3.8.0")
+                    reader.get_value_by_obis_code("1-1:4.8.0")
+                    reader.get_value_by_obis_code("1-1:1.9.2")
+                    reader.get_value_by_obis_code("1-1:2.9.2")
+                    reader.get_value_by_obis_code("1-1:3.9.2")
+                    #reader.get_value_by_obis_code("1-1:4.9.2")  NO ENCONTRADO
+                    reader.get_value_by_obis_code("1-4:36.7.0")
+                    reader.get_value_by_obis_code("1-4:56.7.0")
+                    reader.get_value_by_obis_code("1-4:76.7.0")
+                    reader.get_value_by_obis_code("1-4:16.7.0")
+                    reader.get_value_by_obis_code("1-4:151.7.0")
+                    reader.get_value_by_obis_code("1-4:171.7.0")
+                    reader.get_value_by_obis_code("1-4:191.7.0")
+                    reader.get_value_by_obis_code("1-4:131.7.0")
+                    print('else')
+            except (ValueError, GXDLMSException, GXDLMSExceptionResponse, GXDLMSConfirmedServiceError) as ex:
+                print(f'error:{ex}')
+            except (KeyboardInterrupt, SystemExit, Exception) as ex:
+                traceback.print_exc()
+                if settings.media:
+                    settings.media.close()
+                reader = None
+            finally:
+                if reader:
                     try:
-                        c = GXDLMSObjectCollection.load(settings.outputFile)
-                        settings.client.objects.extend(c)
-                        if settings.client.objects:
-                            read = True
+                        reader.close()
                     except Exception:
-                        read = False
-                if not read:
-                    reader.getAssociationView()
-                for k, v in settings.readObjects:
-                    obj = settings.client.objects.findByLN(ObjectType.NONE, k)
-                    if obj is None:
-                        raise Exception("Unknown logical name:" + k)
-                    val = reader.read(obj, v)
-                    print(val)
-                    reader.showValue(v, val)
-                if settings.outputFile:
-                    settings.client.objects.save(settings.outputFile)
-            else:
-                #reader.get_value_by_obis_code('1.1.72.7.0.255')
-                #reader.read(GXDLMSObject('43744',None,0),3)
-                reader.get_value_by_obis_code("1-1:33.7.0",settings.outputFile)
-                #reader.get_value_by_obis_code('1.1.14.7.0',settings.outputFile)
-                #reader.get_value_by_obis_code('0.0.40.0.0.255')
-                #reader.readAll(settings.outputFile)
-                print('else')
-        except (ValueError, GXDLMSException, GXDLMSExceptionResponse, GXDLMSConfirmedServiceError) as ex:
-            print(f'error:{ex}')
-        except (KeyboardInterrupt, SystemExit, Exception) as ex:
-            traceback.print_exc()
-            if settings.media:
-                settings.media.close()
-            reader = None
-        finally:
-            if reader:
-                try:
-                    reader.close()
-                except Exception:
-                    traceback.print_exc()
-            print("Ended. Press any key to continue.")
+                        traceback.print_exc()
+                print("Ended. Press any key to continue.")
+                time.sleep(10)
             
     
 

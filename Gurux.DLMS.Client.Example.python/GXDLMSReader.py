@@ -44,7 +44,6 @@ from gurux_dlms.enums import InterfaceType, ObjectType, Authentication, Conforma
 from gurux_dlms.objects import GXDLMSObject, GXDLMSObjectCollection, GXDLMSData, GXDLMSRegister,\
     GXDLMSDemandRegister, GXDLMSProfileGeneric, GXDLMSExtendedRegister
 from gurux_net import GXNet
-import re
 
 
 
@@ -556,7 +555,7 @@ class GXDLMSReader:
             self.close()
             
     #####---------------------------------------
-    def get_value_by_obis_code(self, obis_code:GXDLMSObject, outputFile):
+    def initialize_get_value_by_obis_code(self,outputFile):
         read = False
         self.initializeConnection()
         if outputFile and os.path.exists(outputFile):
@@ -570,15 +569,13 @@ class GXDLMSReader:
         if not read:
             self.getAssociationView()
             self.readScalerAndUnits()
+
+    def get_value_by_obis_code(self, obis_code:GXDLMSObject):
         value = 0
-        #split_separator = '.'
         split_separator = "."
-        #obis_objective = self.split_obis_code(obis_code, split_separator)
         obis_code = obis_code.replace("-",".").replace(":",".")
         obis_objective = obis_code.split(split_separator)
-        print(obis_objective)
         for it in self.client.objects:
-            #obis_local = self.split_obis_code(it.logicalName, split_separator)
             obis_local = it.logicalName.replace("-",".").replace(":",".")
             obis_local = obis_local.split(split_separator)
             if (obis_local[0] == obis_objective[0] and
@@ -586,12 +583,9 @@ class GXDLMSReader:
                 obis_local[2] == obis_objective[2] and
                 obis_local[3] == obis_objective[3] and
                 obis_local[4] == obis_objective[4]):
-                print("Hey si pelao")
                 val3 = self.read(it, 3)
                 value = float(self.read(it, 2)) 
+                print(it.description)
                 print(value)
-                print("ñe")
                 return value
         raise ValueError(f"OBIS code {obis_code} not found")
-
-        
