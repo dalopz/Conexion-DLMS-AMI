@@ -555,19 +555,40 @@ class GXDLMSReader:
             self.close()
             
     #####---------------------------------------
-    def get_value_by_obis_code(self, obis_code:GXDLMSObject):
+    def get_value_by_obis_code(self, obis_code:GXDLMSObject, outputFile):
+        read = False
+        self.initializeConnection()
+        if outputFile and os.path.exists(outputFile):
+            try:
+                c = GXDLMSObjectCollection.load(outputFile)
+                self.client.objects.extend(c)
+                if self.client.objects:
+                    read = True
+            except Exception:
+                read = False
+        if not read:
+            self.getAssociationView()
+            self.readScalerAndUnits()
         value = 0
         split_separator = ['.']
         obis_objective = self.split_obis_code(obis_code, split_separator)
+        if self.client.objects:
+            print("SI HAY")
+        else:
+            print("NO HAY")
+        print(obis_objective)
         for it in self.client.objects:
-            obis_local = self.split_obis_code(it.logical_name, split_separator)
+            obis_local = self.split_obis_code(it.logicalName, split_separator)
             if (obis_local[0] == obis_objective[0] and
                 obis_local[1] == obis_objective[1] and
                 obis_local[2] == obis_objective[2] and
                 obis_local[3] == obis_objective[3] and
                 obis_local[4] == obis_objective[4]):
+                print("Hey si pelao")
                 val3 = self.read(it, 3)
                 value = float(self.read(it, 2)) 
+                print(value)
+                print("ñe")
                 return value
         raise ValueError(f"OBIS code {obis_code} not found")
 

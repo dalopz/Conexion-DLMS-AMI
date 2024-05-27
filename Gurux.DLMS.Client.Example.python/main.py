@@ -120,7 +120,8 @@ class sampleclient():
                 print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
                 #reader.get_value_by_obis_code('1.1.72.7.0.255')
                 #reader.read(GXDLMSObject('43744',None,0),3)
-                reader.get_value_by_obis_code('1.0.31.7.126.255')
+                reader.get_value_by_obis_code('1.0.31.7.126',settings.outputFile)
+                #reader.get_value_by_obis_code('0.0.40.0.0.255')
                 #reader.readAll(settings.outputFile)
                 print('else')
         except (ValueError, GXDLMSException, GXDLMSExceptionResponse, GXDLMSConfirmedServiceError) as ex:
