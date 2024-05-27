@@ -35,6 +35,7 @@ import os
 import sys
 import traceback
 import time
+import schedule
 from gurux_serial import GXSerial
 from gurux_net import GXNet
 from gurux_dlms.enums import ObjectType
@@ -65,18 +66,11 @@ except Exception:
 class sampleclient():
     @classmethod
     def main(cls, args):
-        try:
-            print("gurux_dlms version: " + pkg_resources.get_distribution("gurux_dlms").version)
-            print("gurux_net version: " + pkg_resources.get_distribution("gurux_net").version)
-            print("gurux_serial version: " + pkg_resources.get_distribution("gurux_serial").version)
-        except Exception:
-            #It's OK if this fails.
-            print("pkg_resources not found")
-
         # args: the command line arguments
-        reader = None
-        settings = GXSettings()
-        while True:
+        
+        def job():
+            reader = None
+            settings = GXSettings()
             try:
                 # //////////////////////////////////////
                 #  Handle command line parameters.
@@ -180,8 +174,14 @@ class sampleclient():
                         traceback.print_exc()
                 print("Ended. Press any key to continue.")
                 time.sleep(5)
+
+        schedule.every(5).seconds.do(job)
+        
+        while True:
+            schedule.run_pending()
+            time.sleep(2)
             
-    
+        
 
 if __name__ == '__main__':
    
