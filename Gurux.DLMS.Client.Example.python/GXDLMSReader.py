@@ -44,6 +44,7 @@ from gurux_dlms.enums import InterfaceType, ObjectType, Authentication, Conforma
 from gurux_dlms.objects import GXDLMSObject, GXDLMSObjectCollection, GXDLMSData, GXDLMSRegister,\
     GXDLMSDemandRegister, GXDLMSProfileGeneric, GXDLMSExtendedRegister
 from gurux_net import GXNet
+import re
 
 
 
@@ -570,11 +571,16 @@ class GXDLMSReader:
             self.getAssociationView()
             self.readScalerAndUnits()
         value = 0
-        split_separator = ['.']
-        obis_objective = self.split_obis_code(obis_code, split_separator)
+        #split_separator = '.'
+        split_separator = "."
+        #obis_objective = self.split_obis_code(obis_code, split_separator)
+        obis_code = obis_code.replace("-",".").replace(":",".")
+        obis_objective = obis_code.split(split_separator)
         print(obis_objective)
         for it in self.client.objects:
-            obis_local = self.split_obis_code(it.logicalName, split_separator)
+            #obis_local = self.split_obis_code(it.logicalName, split_separator)
+            obis_local = it.logicalName.replace("-",".").replace(":",".")
+            obis_local = obis_local.split(split_separator)
             if (obis_local[0] == obis_objective[0] and
                 obis_local[1] == obis_objective[1] and
                 obis_local[2] == obis_objective[2] and
@@ -588,8 +594,4 @@ class GXDLMSReader:
                 return value
         raise ValueError(f"OBIS code {obis_code} not found")
 
-    def split_obis_code(self, obis_code, split_separator):
-        for sep in split_separator:
-            if sep in obis_code:
-                return obis_code.split(sep)
-        return [obis_code]
+        

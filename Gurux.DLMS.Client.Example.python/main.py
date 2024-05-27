@@ -116,11 +116,9 @@ class sampleclient():
                 if settings.outputFile:
                     settings.client.objects.save(settings.outputFile)
             else:
-                
-                print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
                 #reader.get_value_by_obis_code('1.1.72.7.0.255')
                 #reader.read(GXDLMSObject('43744',None,0),3)
-                reader.get_value_by_obis_code('1.1.33.7.0',settings.outputFile)
+                reader.get_value_by_obis_code("1-1:33.7.0",settings.outputFile)
                 #reader.get_value_by_obis_code('1.1.14.7.0',settings.outputFile)
                 #reader.get_value_by_obis_code('0.0.40.0.0.255')
                 #reader.readAll(settings.outputFile)
