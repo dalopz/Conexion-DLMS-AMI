@@ -80,7 +80,9 @@ class sampleclient():
             try:
                 # //////////////////////////////////////
                 #  Handle command line parameters.
-                ret = settings.getParameters(args)
+                argumentos = ['main.py', '-r', 'sn', '-c', '32', '-s', '1', '-h', '10.60.63.21', '-p', '4059', '-P', '00000000', '-a', 'Low']
+                ret = settings.getParameters(argumentos)
+                print(args)
                 if ret != 0:
                     return
                 # //////////////////////////////////////
@@ -177,7 +179,7 @@ class sampleclient():
                     except Exception:
                         traceback.print_exc()
                 print("Ended. Press any key to continue.")
-                time.sleep(10)
+                time.sleep(5)
             
     
 
