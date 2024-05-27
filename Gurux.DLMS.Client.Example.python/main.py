@@ -58,10 +58,6 @@ from gurux_dlms.objects import GXDLMSObject
 
 try:
     import pkg_resources
-    target_url = "http://localhost:1026/v2/entities/SM_EVI01/attrs"
-    headers = {
-        "Content-Type": "application/json"
-    }
     #pylint: disable=broad-except
 except Exception:
     #It's OK if this fails.
@@ -72,7 +68,10 @@ class sampleclient():
     @classmethod
     def main(cls, args):
         # args: the command line arguments
-        
+        target_url = "http://localhost:1026/v2/entities/SM_EVI01/attrs"
+        headers = {
+            "Content-Type": "application/json"
+        }
         def job():
             reader = None
             settings = GXSettings()
