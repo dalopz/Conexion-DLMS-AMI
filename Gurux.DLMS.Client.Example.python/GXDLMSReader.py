@@ -572,10 +572,6 @@ class GXDLMSReader:
         value = 0
         split_separator = ['.']
         obis_objective = self.split_obis_code(obis_code, split_separator)
-        if self.client.objects:
-            print("SI HAY")
-        else:
-            print("NO HAY")
         print(obis_objective)
         for it in self.client.objects:
             obis_local = self.split_obis_code(it.logicalName, split_separator)
