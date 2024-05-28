@@ -1,36 +1,3 @@
-#
-#  --------------------------------------------------------------------------
-#   Gurux Ltd
-#
-#
-#
-#  Filename: $HeadURL$
-#
-#  Version: $Revision$,
-#                   $Date$
-#                   $Author$
-#
-#  Copyright (c) Gurux Ltd
-#
-# ---------------------------------------------------------------------------
-#
-#   DESCRIPTION
-#
-#  This file is a part of Gurux Device Framework.
-#
-#  Gurux Device Framework is Open Source software; you can redistribute it
-#  and/or modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; version 2 of the License.
-#  Gurux Device Framework is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-#  See the GNU General Public License for more details.
-#
-#  More information of Gurux products: http://www.gurux.org
-#
-#  This code is licensed under the GNU General Public License v2.
-#  Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
-# ---------------------------------------------------------------------------
 import os
 import sys
 import traceback
@@ -57,8 +24,7 @@ from gurux_dlms.objects import GXDLMSObject
 
 
 try:
-    import pkg_resources
-    target_url = "http://localhost:1026/v2/entities/SM_EVI01/attrs"
+    target_url = "http://localhost:1026/v2/entities/SmartMeterPrueba2/attrs"
     headers = {
         "Content-Type": "application/json"
     }
@@ -77,27 +43,26 @@ class sampleclient():
             reader = None
             settings = GXSettings()
             try:
-                # //////////////////////////////////////
+
                 #  Handle command line parameters.
-                argumentos = ['main.py', '-r', 'sn', '-c', '32', '-s', '1', '-h', '10.60.63.21', '-p', '4059', '-P', '00000000', '-a', 'Low']
+                argumentos = ['main.py', '-r', 'sn', '-c', '32', '-s', '1', '-h', '10.60.24.24', '-p', '4059', '-P', '00000000', '-a', 'Low']
                 ret = settings.getParameters(argumentos)
                 print(args)
                 if ret != 0:
                     return
-                # //////////////////////////////////////
+
                 #  Initialize connection settings.
                 if not isinstance(settings.media, (GXSerial, GXNet)):
                     raise Exception("Unknown media type.")
-                # //////////////////////////////////////
+
                 reader = GXDLMSReader(settings.client, settings.media, settings.trace, settings.invocationCounter)
-                print('hizo el reader')
+
                 settings.media.open()
-                print('hizo el media.open')
+
                 if settings.readObjects:
-                    print('if settings')
+
                     read = False
                     reader.initializeConnection()
-                    print('conectando')
                     
                     if settings.outputFile and os.path.exists(settings.outputFile):
                         try:
@@ -334,7 +299,7 @@ class sampleclient():
                 print("Ended. Press any key to continue.")
                 time.sleep(5)
 
-        schedule.every(5).seconds.do(job)
+        schedule.every(30).seconds.do(job)
         
         while True:
             schedule.run_pending()
