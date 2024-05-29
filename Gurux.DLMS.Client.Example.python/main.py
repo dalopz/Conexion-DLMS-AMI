@@ -10,17 +10,7 @@ from gurux_dlms.enums import ObjectType
 from gurux_dlms.objects.GXDLMSObjectCollection import GXDLMSObjectCollection
 from GXSettings import GXSettings
 from GXDLMSReader import GXDLMSReader
-from gurux_dlms.GXDLMSClient import GXDLMSClient
-from gurux_common.GXCommon import GXCommon
-from gurux_dlms.enums.DataType import DataType
-import locale
-from gurux_dlms.GXDateTime import GXDateTime
-from gurux_dlms.internal._GXCommon import _GXCommon
-from gurux_dlms import GXDLMSException, GXDLMSExceptionResponse, GXDLMSConfirmedServiceError, GXDLMSTranslator
-from gurux_dlms import GXByteBuffer, GXDLMSTranslatorMessage, GXReplyData
-from gurux_dlms.enums import RequestTypes, Security, InterfaceType
-from gurux_dlms.secure.GXDLMSSecureClient import GXDLMSSecureClient
-from gurux_dlms.objects import GXDLMSObject
+from gurux_dlms import GXDLMSException, GXDLMSExceptionResponse, GXDLMSConfirmedServiceError
 
 
 try:
@@ -45,7 +35,7 @@ class sampleclient():
             try:
 
                 #  Handle command line parameters.
-                argumentos = ['main.py', '-r', 'sn', '-c', '32', '-s', '1', '-h', '10.60.24.24', '-p', '4059', '-P', '00000000', '-a', 'Low']
+                argumentos = ['main.py', '-r', 'sn', '-c', '32', '-s', '1', '-h', '10.60.20.22', '-p', '4059', '-P', '00000000', '-a', 'Low']
                 ret = settings.getParameters(argumentos)
                 print(args)
                 if ret != 0:
